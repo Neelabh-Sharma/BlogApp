@@ -1,0 +1,44 @@
+# === Node Modules ===
+client/node_modules/
+server/node_modules/
+
+# === Build Output ===
+client/build/
+server/dist/
+
+# === Logs ===
+*.log
+client/logs/
+server/logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# === Environment Variables ===
+client/.env
+server/.env
+.env
+
+# === OS Specific Files ===
+.DS_Store
+Thumbs.db
+
+# === IDE Specific Files ===
+.vscode/
+.idea/
+
+# === Dependency Lock Files (optional based on team preference) ===
+# Uncomment if you want to ignore lock files
+# client/package-lock.json
+# server/package-lock.json
+# client/yarn.lock
+# server/yarn.lock
+
+# === Coverage Reports ===
+client/coverage/
+server/coverage/
+
+# === Miscellaneous ===
+*.bak
+*.tmp
+*.swp
