@@ -58,21 +58,27 @@ Welcome to **InfoApp**, a full-stack blog application that allows users to:
 ```bash
 git clone https://github.com/Neelabh-Sharma/BlogApp.git
 cd blogApp
+```
 
 ### SETUP BACKEND:
+```
 cd server
 npm install
+```
 # create a .env file with the following variables:
+```
 # PORT=5000
 # MONGODB_URI=your_mongo_uri
 # JWT_SECRET=your_jwt_secret
 npm start
+```
 
 ### SETUP Frontend:
+```
 cd client
 npm install
 npm run dev  # or npm start depending on your config
-
+```
 ### Author
  - Neelabh sharma
 
