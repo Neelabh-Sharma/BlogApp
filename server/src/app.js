@@ -15,6 +15,11 @@ app.use(morgan('dev'));
 app.use(compression());
 app.use(express.json());
 
+// Default Route 
+app.get('/',(req,res) =>{
+    res.send("API Version 1.0.0");
+})
+
 // Routes
 app.use('/api/auth', authRoutes);
 
