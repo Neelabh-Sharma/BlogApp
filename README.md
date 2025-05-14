@@ -79,6 +79,12 @@ cd client
 npm install
 npm run dev  # or npm start depending on your config
 ```
+### Deploy Links :
+```
+backend API : https://infoappp.onrender.com
+frontend URL : 
+```
+
 ### Author
  - Neelabh sharma
 
