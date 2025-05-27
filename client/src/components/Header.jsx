@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-
+import { PenTool } from "lucide-react"
 const NAV_ITEMS = [{
   title : "Home",
   url : '/',
@@ -20,8 +20,9 @@ function Header() {
       <nav className="max-w-screen-xl mx-auto flex flex-wrap items-center justify-between px-4 lg:px-6 py-2.5">
         
         {/* Logo / Title */}
-        <span className="text-xl font-semibold whitespace-nowrap dark:text-white">
-           Info App
+        <span className="flex  text-xl font-semibold whitespace-nowrap dark:text-white">
+            Info App
+            <PenTool className="ms-2 w-8 h-4 text-orange-500" />
         </span>
 
         {/* Right Controls: Auth & Toggle */}

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
-const Header = ({ toggleSidebar }) => {
+const Header = ({ toggleSidebar, formData }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-    const NavLinks = [
+  const NavLinks = [
     {
       title: "Dashboard",
       url: "/dashboard",
@@ -58,9 +58,8 @@ const Header = ({ toggleSidebar }) => {
           {dropdownOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded shadow-md dark:bg-gray-700">
               <div className="px-4 py-3">
-                <p className="text-sm text-gray-900 dark:text-white">Neil Sims</p>
                 <p className="text-sm font-medium text-gray-500 truncate dark:text-gray-300">
-                  neil.sims@flowbite.com
+                  Welcome, {formData?.email || "User"}
                 </p>
               </div>
               <ul className="py-1">
