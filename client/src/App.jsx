@@ -9,7 +9,7 @@ const Dashboard = lazy(() => import('./pages/auth/Dashboard'));
 const Earning = lazy(() => import('./pages/auth/Earning'));
 const Help = lazy(() => import('./pages/auth/Help'));
 const Setting = lazy(() => import('./pages/auth/Setting'));
-const Writeblog = lazy(() => import('./pages/auth/WriteBlog'));
+const WriteBlog = lazy(() => import('./pages/auth/WriteBlog'));
 const YourBlog = lazy(() => import('./pages/auth/YourBlog'));
 const ContactForm = lazy(() => import('./pages/Contact'));
 const ForgetPassword = lazy(() => import('./pages/ForgetPassword'));
@@ -17,33 +17,129 @@ const ReadBlog = lazy(() => import('./pages/ReadBlog'));
 
 function App() {
   const [isLogin, setIsLogin] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    setIsLogin(!!token); // if token exists, set true
+    setIsLogin(!!token);
+    setIsLoading(false);
   }, []);
 
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'token') {
+        setIsLogin(!!e.newValue);
+      }
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
+  const handleLogin = (token) => {
+    localStorage.setItem('token', token);
+    setIsLogin(true);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setIsLogin(false);
+  };
+
+  if (isLoading) return <LoadingSpinner />;
+
   return (
-    <Suspense fallback={<LoadingSpinner />}>
-      <BrowserRouter>
+    <BrowserRouter>
+      <Suspense fallback={<LoadingSpinner />}>
         <Routes>
           <Route path='/' element={<Home />} />
-          <Route path='/signin' element={<SignInForm />} />
-          <Route path='/signup' element={<SignUpForm />} />
+          <Route
+            path='/signin'
+            element={
+              isLogin ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <SignInForm onLogin={handleLogin} />
+              )
+            }
+          />
+          <Route
+            path='/signup'
+            element={
+              isLogin ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <SignUpForm onLogin={handleLogin} />
+              )
+            }
+          />
           <Route path='/contact' element={<ContactForm />} />
           <Route path='/forgetpassword' element={<ForgetPassword />} />
           <Route path='/readblog' element={<ReadBlog />} />
 
-          {/* Protected routes */}
-          <Route path='/dashboard' element={isLogin ? <Dashboard /> : <Navigate to="/signin" />} />
-          <Route path='/earning' element={isLogin ? <Earning /> : <Navigate to="/signin" />} />
-          <Route path='/help' element={isLogin ? <Help /> : <Navigate to="/signin" />} />
-          <Route path='/setting' element={isLogin ? <Setting /> : <Navigate to="/signin" />} />
-          <Route path='/writeblog' element={isLogin ? <Writeblog /> : <Navigate to="/signin" />} />
-          <Route path='/yourblog' element={isLogin ? <YourBlog /> : <Navigate to="/signin" />} />
+          {/* Protected Routes */}
+          <Route
+            path='/dashboard'
+            element={
+              isLogin ? (
+                <Dashboard onLogout={handleLogout} />
+              ) : (
+                <Navigate to="/signin" replace />
+              )
+            }
+          />
+          <Route
+            path='/earning'
+            element={
+              isLogin ? (
+                <Earning onLogout={handleLogout} />
+              ) : (
+                <Navigate to="/signin" replace />
+              )
+            }
+          />
+          <Route
+            path='/help'
+            element={
+              isLogin ? (
+                <Help onLogout={handleLogout} />
+              ) : (
+                <Navigate to="/signin" replace />
+              )
+            }
+          />
+          <Route
+            path='/setting'
+            element={
+              isLogin ? (
+                <Setting onLogout={handleLogout} />
+              ) : (
+                <Navigate to="/signin" replace />
+              )
+            }
+          />
+          <Route
+            path='/writeblog'
+            element={
+              isLogin ? (
+                <WriteBlog onLogout={handleLogout} />
+              ) : (
+                <Navigate to="/signin" replace />
+              )
+            }
+          />
+          <Route
+            path='/yourblog'
+            element={
+              isLogin ? (
+                <YourBlog onLogout={handleLogout} />
+              ) : (
+                <Navigate to="/signin" replace />
+              )
+            }
+          />
         </Routes>
-      </BrowserRouter>
-    </Suspense>
+      </Suspense>
+    </BrowserRouter>
   );
 }
 

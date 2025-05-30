@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Header from "./authComponent/Header";
 import Sidebar from "./authComponent/sidebar";
 import dataCard from "./authComponent/dataCard";
-const DashboardLayout = () => {
+const DashboardLayout = ({ onLogout}) => {
    const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
@@ -31,7 +31,7 @@ const DashboardLayout = () => {
   return (
     <div>
       <Header toggleSidebar={toggleSidebar} />
-      <Sidebar isOpen={sidebarOpen} />
+      <Sidebar isOpen={true} onLogout={onLogout} />
       <main className="pt-20 pl-0 sm:pl-64 bg-gray-100 min-h-screen p-4">
           <div className="max-w-md mx-auto p-4 bg-white rounded shadow">
       <h2 className="text-2xl font-bold mb-4"> Help support </h2>

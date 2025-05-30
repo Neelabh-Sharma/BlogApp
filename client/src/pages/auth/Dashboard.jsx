@@ -9,15 +9,15 @@ const statsData = [
   { label: "Blog", value: 10 },
 ];
 
-const DashboardLayout = ({ formData }) => {
+const DashboardLayout = ({onLogout ,formData }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   return (
-    <div>
+    <div className="h-[100vh] w-[100vw]">
       <Header toggleSidebar={toggleSidebar} formData = {formData} />
-      <Sidebar isOpen={sidebarOpen} />
+      <Sidebar isOpen={sidebarOpen} onLogout={onLogout} />
       <main className="pt-20 pl-0 sm:pl-64 bg-gray-100 min-h-screen p-4">
         <div className="flex gap-4 justify-around flex-wrap lg:flex-nowrap">
           {statsData.map(({ label, value }) => (
