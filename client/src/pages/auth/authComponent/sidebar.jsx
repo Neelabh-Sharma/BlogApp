@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Home,
   BookOpen,
@@ -6,32 +6,28 @@ import {
   HelpCircle,
   Settings,
   LogOut,
-  ChevronRight
+  ChevronRight,
+  X,
+  Menu
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
-// Mock Link component since we don't have react-router-dom
-const Link = ({ to, children, className, onClick }) => {
-  const handleClick = (e) => {
-    if (onClick) {
-      onClick(e);
-    }
-  };
-
-  return (
-    <a
-      href={to}
-      className={className}
-      onClick={handleClick}
-    >
-      {children}
-    </a>
-  );
-};
-
-const Sidebar = ({ isOpen, onLogout }) => {
-  const [activeItem, setActiveItem] = useState("Home");
+const Sidebar = ({ isOpen, onLogout, toggleSidebar }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [activeItem, setActiveItem] = useState("Home");
+
+  // Determine active item based on current route
+  useEffect(() => {
+    const pathToTitle = {
+      "/dashboard": "Home",
+      "/yourblog": "Your Blogs",
+      "/writeblog": "Write Blog",
+      "/help": "Help",
+      "/setting": "Settings",
+    };
+    setActiveItem(pathToTitle[location.pathname] || "Home");
+  }, [location.pathname]);
 
   const sideitem = [
     {
@@ -66,105 +62,134 @@ const Sidebar = ({ isOpen, onLogout }) => {
     },
   ];
 
-  const handleItemClick = (itemTitle) => {
+  const handleItemClick = (itemTitle, url) => {
     setActiveItem(itemTitle);
+    navigate(url);
+    // Close sidebar on mobile after navigation
+    if (window.innerWidth < 768 && toggleSidebar) {
+      toggleSidebar();
+    }
   };
 
   const handleSignOut = () => {
     if (onLogout) {
       onLogout();
     }
-    navigate("/signin"); // Redirect to login page after logout
+    navigate("/signin");
   };
 
   return (
-    <aside
-      className={`w-[25%] lg:w-[19%] fixed mr-4 top-0 left-0 z-40 w-72 h-screen pt-20 transition-all duration-300 ease-in-out bg-gradient-to-b from-slate-50 to-white border-r border-gray-200 shadow-xl dark:from-gray-900 dark:to-gray-800 dark:border-gray-700 ${
-        isOpen ? "translate-x-0" : "-translate-x-full sm:translate-x-0"
-      }`}
-      aria-label="Sidebar"
-    >
-      <div className="h-full flex flex-col">
-        {/* Navigation Items */}
-        <div className="flex-1 px-4 py-6 overflow-y-auto">
-          <nav className="space-y-2">
-            {sideitem.map((item) => {
-              const IconComponent = item.icon;
-              const isActive = activeItem === item.title;
+    <>
+      {/* Overlay for mobile */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 sm:hidden"
+          onClick={toggleSidebar}
+        />
+      )}
 
-              return (
-                <Link
-                  key={item.title}
-                  to={item.url}
-                  onClick={() => handleItemClick(item.title)}
-                  className={`group flex items-center justify-between p-3 rounded-xl transition-all duration-200 hover:scale-105 ${
-                    isActive
-                      ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg"
-                      : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
-                  }`}
-                >
-                  <div className="flex items-center space-x-3">
-                    <div className={`p-2 rounded-lg transition-colors ${
-                      isActive
-                        ? "bg-white bg-opacity-20"
-                        : "bg-gray-100 group-hover:bg-gray-200 dark:bg-gray-700 dark:group-hover:bg-gray-600"
-                    }`}>
-                      <IconComponent className={`w-5 h-5 ${
-                        isActive ? "text-white" : "text-gray-600 dark:text-gray-400"
-                      }`} />
-                    </div>
-                    <div>
-                      <p className={`font-medium ${
-                        isActive ? "text-white" : "text-gray-900 dark:text-white"
-                      }`}>
-                        {item.title}
-                      </p>
-                      <p className={`text-xs ${
-                        isActive
-                          ? "text-white text-opacity-80"
-                          : "text-gray-500 dark:text-gray-400"
-                      }`}>
-                        {item.description}
-                      </p>
-                    </div>
-                  </div>
-                  <ChevronRight className={`w-4 h-4 transition-transform ${
-                    isActive
-                      ? "text-white transform rotate-90"
-                      : "text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300"
-                  }`} />
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
-
-        {/* Sign Out Section */}
-        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+      <aside
+        className={`fixed top-0 left-0 z-40 w-72 h-screen pt-20 transition-all duration-300 ease-in-out bg-gradient-to-b from-white via-gray-50 to-white border-r border-gray-200 shadow-lg ${
+          isOpen ? "translate-x-0" : "-translate-x-full sm:translate-x-0"
+        }`}
+        aria-label="Sidebar"
+      >
+        <div className="h-full flex flex-col">
+          {/* Close button for mobile */}
           <button
-            onClick={handleSignOut}
-            className="w-full flex items-center space-x-3 p-3 text-red-600 rounded-xl hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900 dark:hover:bg-opacity-20 transition-all duration-200 group"
+            onClick={toggleSidebar}
+            className="sm:hidden absolute top-6 right-4 p-2 text-gray-500 hover:text-gray-900 rounded-lg hover:bg-gray-200 transition-colors"
+            aria-label="Close sidebar"
           >
-            <div className="p-2 rounded-lg bg-red-100 group-hover:bg-red-200 dark:bg-red-900 dark:bg-opacity-30 dark:group-hover:bg-red-900 dark:group-hover:bg-opacity-50 transition-colors">
-              <LogOut className="w-5 h-5" />
+            <X className="w-6 h-6" />
+          </button>
+
+          {/* Navigation Items */}
+          <div className="flex-1 px-4 py-6 overflow-y-auto scrollbar-hide">
+            <nav className="space-y-2">
+              {sideitem.map((item) => {
+                const IconComponent = item.icon;
+                const isActive = activeItem === item.title;
+
+                return (
+                  <button
+                    key={item.title}
+                    onClick={() => handleItemClick(item.title, item.url)}
+                    className={`w-full group flex items-center justify-between px-4 py-4 rounded-xl transition-all duration-200 ${
+                      isActive
+                        ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md"
+                        : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    }`}
+                  >
+                    <div className="flex items-center space-x-3 flex-1 min-w-0">
+                      <div className={`p-2.5 rounded-lg transition-all flex-shrink-0 ${
+                        isActive
+                          ? "bg-white bg-opacity-20"
+                          : "bg-gray-200 group-hover:bg-gray-300"
+                      }`}>
+                        <IconComponent className={`w-5 h-5 ${
+                          isActive ? "text-white" : "text-gray-700"
+                        }`} />
+                      </div>
+                      <div className="text-left min-w-0">
+                        <p className={`font-semibold text-sm truncate ${
+                          isActive ? "text-white" : "text-gray-900"
+                        }`}>
+                          {item.title}
+                        </p>
+                        <p className={`text-xs truncate ${
+                          isActive
+                            ? "text-blue-100"
+                            : "text-gray-600"
+                        }`}>
+                          {item.description}
+                        </p>
+                      </div>
+                    </div>
+                    <ChevronRight className={`w-4 h-4 flex-shrink-0 ml-2 transition-transform ${
+                      isActive
+                        ? "text-white"
+                        : "text-gray-500 group-hover:text-gray-700"
+                    }`} />
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+
+          {/* Bottom Section */}
+          <div className="border-t border-gray-200 bg-gradient-to-t from-gray-50 to-white">
+            {/* Sign Out Button */}
+            <div className="p-4">
+              <button
+                onClick={handleSignOut}
+                className="w-full flex items-center space-x-3 px-4 py-3 text-red-600 rounded-xl hover:bg-red-50 hover:text-red-700 transition-all duration-200 group border border-red-200 hover:border-red-300"
+              >
+                <div className="p-2.5 rounded-lg bg-red-100 group-hover:bg-red-200 transition-all flex-shrink-0">
+                  <LogOut className="w-5 h-5" />
+                </div>
+                <div className="text-left flex-1 min-w-0">
+                  <p className="font-semibold text-sm">Sign Out</p>
+                  <p className="text-xs text-red-500">
+                    Logout from your account
+                  </p>
+                </div>
+              </button>
             </div>
-            <div className="text-left">
-              <p className="font-medium">Sign Out</p>
-              <p className="text-xs text-red-500 dark:text-red-400">
-                Logout from your account
+
+            {/* Footer */}
+            <div className="px-4 py-3 border-t border-gray-200">
+              <p className="text-xs text-gray-600 text-center">
+                © 2025 InfoApp
+              </p>
+              <p className="text-xs text-gray-500 text-center mt-1">
+                All rights reserved
               </p>
             </div>
-          </button>
+          </div>
         </div>
-
-        {/* Footer */}
-        <div className="px-6 py-3 text-center border-t border-gray-200 dark:border-gray-700">
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            © 2025 InfoApp. All rights reserved.
-          </p>
-        </div>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 };
 

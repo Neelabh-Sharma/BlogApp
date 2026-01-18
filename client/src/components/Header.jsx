@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { PenTool, User, LogOut } from "lucide-react";
+import { PenTool, User, LogOut, Menu, X, Download } from "lucide-react";
 
 const NAV_ITEMS = [{
   title: "Home",
@@ -17,11 +17,26 @@ function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  const [isScrolled, setIsScrolled] = useState(false);
   const navigate = useNavigate();
 
   // Check authentication status on component mount
   useEffect(() => {
     checkAuthStatus();
+  }, []);
+
+  // Handle scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const checkAuthStatus = () => {
@@ -68,11 +83,13 @@ function Header() {
   const renderAuthButtons = () => {
     if (isLoggedIn) {
       return (
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-4">
           {/* User Profile */}
-          <div className="flex items-center space-x-2 text-gray-700 dark:text-white">
-            <User className="w-5 h-5" />
-            <span className="hidden sm:inline text-sm font-medium">
+          <div className="hidden sm:flex items-center gap-3 px-4 py-2 rounded-full bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200/50">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center">
+              <User className="w-4 h-4 text-white" />
+            </div>
+            <span className="text-sm font-semibold text-gray-800 truncate max-w-[100px]">
               {user?.name || user?.email || 'User'}
             </span>
           </div>
@@ -80,7 +97,7 @@ function Header() {
           {/* Dashboard Link */}
           <Link
             to="/dashboard"
-            className="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
+            className="hidden sm:inline-block px-4 py-2 text-sm font-semibold text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-300 border border-transparent hover:border-blue-200"
           >
             Dashboard
           </Link>
@@ -88,85 +105,119 @@ function Header() {
           {/* Logout Button */}
           <button
             onClick={handleLogout}
-            className="flex items-center text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800"
+            className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm font-semibold rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-300 shadow-md hover:shadow-xl transform hover:scale-105 active:scale-95"
           >
-            <LogOut className="w-4 h-4 mr-1" />
-            Logout
+            <LogOut className="w-4 h-4" />
+            <span className="hidden sm:inline">Logout</span>
           </button>
         </div>
       );
     } else {
       return (
-        <>
+        <div className="flex items-center gap-2 sm:gap-3">
           <Link
             to="/signin"
-            className="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
+            className="px-4 py-2 text-sm font-semibold text-gray-700 rounded-lg hover:bg-gray-100 transition-all duration-300 border border-transparent hover:border-gray-300"
           >
             Log in
           </Link>
           <Link
             to="/signup"
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-semibold rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95"
           >
             Get started
           </Link>
-        </>
+        </div>
       );
     }
   };
 
   return (
-    <header className="fixed top-0 left-0 w-full bg-white shadow-lg z-50">
-      <nav className="max-w-screen-xl mx-auto flex flex-wrap items-center justify-between px-4 lg:px-6 py-2.5">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200/50 shadow-md">
+      <nav className="max-w-7xl mx-auto flex flex-wrap items-center justify-between px-4 lg:px-8 py-2">
         
-        {/* Logo / Title */}
-        <Link to="/" className="flex text-xl font-semibold whitespace-nowrap dark:text-white">
-          Info App
-          <PenTool className="ms-2 w-8 h-4 text-orange-500" />
+        {/* Logo / Title with Tagline */}
+        <Link to="/" className="flex items-center gap-3 group">
+          <div className="p-2 rounded-xl bg-gradient-to-br from-blue-600 to-blue-700 group-hover:shadow-lg transition-shadow duration-300">
+            <PenTool className="w-5 h-5 text-white group-hover:scale-110 transition-transform duration-300" />
+          </div>
+          <div className="flex flex-col">
+            <span className="text-lg lg:text-xl font-black text-transparent bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text hover:from-blue-700 hover:to-blue-800 transition-all duration-300 leading-tight">
+              Info App
+            </span>
+            <span className="hidden sm:block text-xs text-gray-500 font-medium">Discover & Share Stories</span>
+          </div>
         </Link>
 
         {/* Right Controls: Auth & Toggle */}
-        <div className="flex items-center lg:order-2">
-          {renderAuthButtons()}
+        <div className="flex items-center lg:order-2 gap-2 lg:gap-3">
+          {/* Main App Download Button */}
+          <a
+            href="#"
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-semibold rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95"
+            title="Download our mobile app"
+          >
+            <Download className="w-4 h-4" />
+            <span className="hidden sm:inline">Get App</span>
+          </a>
+
+          {/* Auth Buttons - only show if not logged in */}
+          {!isLoggedIn && (
+            <div className="hidden lg:flex items-center gap-2">
+              <Link
+                to="/signin"
+                className="px-4 py-2 text-sm font-semibold text-gray-700 rounded-lg hover:bg-gray-100 transition-all duration-300 border border-transparent hover:border-gray-300"
+              >
+                Log in
+              </Link>
+            </div>
+          )}
+
+          {/* Dashboard/Logout - show if logged in */}
+          {isLoggedIn && (
+            <div className="hidden lg:flex items-center gap-3">
+              <Link
+                to="/dashboard"
+                className="px-4 py-2 text-sm font-semibold text-gray-700 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-300 border border-transparent hover:border-blue-200"
+              >
+                Dashboard
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm font-semibold rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-300 shadow-md hover:shadow-xl transform hover:scale-105 active:scale-95"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="hidden sm:inline">Logout</span>
+              </button>
+            </div>
+          )}
 
           {/* Mobile Toggle Button */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="lg:hidden inline-flex items-center p-2 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 ml-2"
+            className="lg:hidden inline-flex items-center justify-center p-2.5 text-gray-700 rounded-xl hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 ml-1 group"
             aria-expanded={menuOpen}
           >
             <span className="sr-only">Toggle menu</span>
             {!menuOpen ? (
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M3 5h14a1 1 0 010 2H3a1 1 0 010-2zm0 5h14a1 1 0 010 2H3a1 1 0 010-2zm0 5h14a1 1 0 010 2H3a1 1 0 010-2z"
-                  clipRule="evenodd"
-                />
-              </svg>
+              <Menu className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
             ) : (
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                  clipRule="evenodd"
-                />
-              </svg>
+              <X className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
             )}
           </button>
         </div>
 
         {/* Navigation Links */}
         <div
-          className={`${menuOpen ? "flex" : "hidden"} w-full lg:flex lg:w-auto lg:order-1`}
+          className={`${menuOpen ? "flex" : "hidden"} w-full lg:flex lg:w-auto lg:order-1 transition-all duration-300 mt-4 lg:mt-0`}
         >
-          <ul className="flex flex-col font-medium mt-4 lg:flex-row lg:space-x-8 lg:mt-0 w-full lg:w-auto">
+          <ul className="flex flex-col font-medium lg:flex-row lg:gap-2 w-full lg:w-auto lg:items-center">
             {NAV_ITEMS.map((item, idx) => (
               <li key={idx}>
                 <Link
                   to={`${item.url}`}
-                  className="block py-2 pl-3 pr-4 rounded lg:p-0 text-gray-700 hover:bg-gray-50 border-b lg:border-0 lg:hover:bg-transparent lg:hover:text-blue-700 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 lg:dark:hover:bg-transparent"
-                  onClick={() => setMenuOpen(false)} // Close mobile menu on link click
+                  className="block py-2.5 px-4 rounded-lg lg:rounded-full text-gray-700 hover:bg-blue-50 border-b lg:border-0 lg:hover:bg-blue-100/50 lg:hover:text-blue-600 transition-all duration-300 font-medium"
+                  onClick={() => setMenuOpen(false)}
                 >
                   {item.title}
                 </Link>
@@ -174,13 +225,23 @@ function Header() {
             ))}
             
             {/* Mobile-only auth links */}
-            <div className="lg:hidden mt-4 pt-4 border-t border-gray-200">
+            <div className="lg:hidden mt-4 pt-4 border-t border-gray-200 w-full">
+              {/* App Download Link - mobile */}
+              <li>
+                <a
+                  href="#"
+                  className="flex items-center gap-2 py-2.5 px-4 text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg transition-all duration-300 font-semibold hover:from-blue-700 hover:to-blue-800 shadow-md"
+                >
+                  <Download className="w-4 h-4" />
+                  Download App
+                </a>
+              </li>
               {isLoggedIn ? (
                 <>
                   <li>
                     <Link
                       to="/dashboard"
-                      className="block py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-50 rounded"
+                      className="block py-2.5 px-4 text-gray-700 hover:bg-blue-50 rounded-lg transition-all duration-300 font-semibold"
                       onClick={() => setMenuOpen(false)}
                     >
                       Dashboard
@@ -192,7 +253,7 @@ function Header() {
                         handleLogout();
                         setMenuOpen(false);
                       }}
-                      className="block w-full text-left py-2 pl-3 pr-4 text-red-600 hover:bg-gray-50 rounded"
+                      className="block w-full text-left py-2.5 px-4 text-red-600 hover:bg-red-50 rounded-lg transition-all duration-300 font-semibold"
                     >
                       Logout
                     </button>
@@ -203,7 +264,7 @@ function Header() {
                   <li>
                     <Link
                       to="/signin"
-                      className="block py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-50 rounded"
+                      className="block py-2.5 px-4 text-gray-700 hover:bg-gray-100 rounded-lg transition-all duration-300 font-medium"
                       onClick={() => setMenuOpen(false)}
                     >
                       Log in
@@ -212,7 +273,7 @@ function Header() {
                   <li>
                     <Link
                       to="/signup"
-                      className="block py-2 pl-3 pr-4 text-blue-600 hover:bg-gray-50 rounded font-medium"
+                      className="block py-2.5 px-4 text-blue-600 hover:bg-blue-50 rounded-lg font-semibold transition-all duration-300 mt-2 bg-blue-50/50"
                       onClick={() => setMenuOpen(false)}
                     >
                       Get started
