@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Header from "./authComponent/Header";
 import Sidebar from "./authComponent/sidebar";
-import DataCard from "./authComponent/dataCard"; // Fixed: Capital 'D'
+import dataCard from "./authComponent/dataCard"; // Fixed: Capital 'D'
 import { createBlog } from "../../features/blogslice";
  // Add correct path to your blogSlice
 
