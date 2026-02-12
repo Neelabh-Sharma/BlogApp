@@ -87,6 +87,7 @@ frontend URL :https://blog-app-rosy-nine.vercel.app
 
 ### Author
  - Neelabh sharma
+ - Kartik Joshi
 
 #License
 
